@@ -1,0 +1,24 @@
+<table class="table table-condensed table-hover">
+	<thead>
+		<tr>
+			<th>ID</th>
+            <th>TITLE</th>
+		</tr>
+	</thead>
+	<tbody>
+    <?php
+    if($this->data->count())
+    {
+
+    foreach($this->data as $o){
+        ?>
+		<tr>
+			<td><?=$o->getId()?></td>
+            <td><?=$o->getTitle()?></td>
+		</tr>
+    <?php
+    }
+    }
+    ?>
+	</tbody>
+</table>

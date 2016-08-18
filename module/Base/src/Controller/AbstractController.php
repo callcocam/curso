@@ -9,9 +9,12 @@
 namespace Base\Controller;
 
 
+use Base\Form\UploadForm;
 use Interop\Container\ContainerInterface;
+use Zend\Http\PhpEnvironment\Response;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\MvcEvent;
+use Zend\View\Model\ViewModel;
 
 abstract class AbstractController extends AbstractActionController {
 
@@ -23,12 +26,15 @@ abstract class AbstractController extends AbstractActionController {
     protected $model;
     protected $form;
     protected $filter;
+    protected $user;
     protected $route;
+    protected $template='/admin/admin/listar';
     protected $controller;
-    protected $ation;
+    protected $action;
     protected $id;
     protected $page;
     protected $data;
+    protected $filtro=[];
 
     /**
      * @param MvcEvent $e
@@ -63,17 +69,27 @@ abstract class AbstractController extends AbstractActionController {
     /**
      * @return mixed
      */
-    public function getForm()
+    public function getForm($form="")
     {
-        return $this->containerInterface->get($this->form);
+        if(empty($form)):
+            $this->form=$this->containerInterface->get($this->form);
+        else:
+            $this->form=$this->containerInterface->get($form);
+        endif;
+        return $this->form;
     }
 
     /**
      * @return mixed
      */
-    public function getFilter()
+    public function getFilter($filter="")
     {
-        return $this->containerInterface->get($this->filter);
+        if(empty($filter)):
+            $this->filter=$this->containerInterface->get($this->filter);
+        else:
+            $this->filter=$this->containerInterface->get($filter);
+        endif;
+        return $this->filter;
     }
 
     /**
@@ -81,12 +97,74 @@ abstract class AbstractController extends AbstractActionController {
      */
     public function getData()
     {
-        if($this->params()->fromPost()){
-            $this->data=array_merge_recursive($this->params()->fromPost(),$this->params()->fromFiles());
-        }
+        $request=$this->getRequest();
+        if(!$request->isPost()):
+            return [];
+        endif;
+        $this->data=array_merge_recursive($request->getPost()->toArray(),
+            $request->getFiles()->toArray());
         return $this->data;
     }
 
 
+    public function indexAction()
+    {
+        $this->page=$this->params()->fromRoute('page','1');
+        if($this->table):
+            $this->filtro=$this->getData();
+            $this->filtro['asset_id']=$this->controller;
+            $this->data=$this->getTable()->select($this->filtro,$this->page);
+            $this->data=$this->data->toArray();
+        endif;
+
+        $view=new ViewModel($this->data);
+        $view->setVariable('controller',$this->controller);
+        $view->setVariable('route',$this->route);
+        $view->setVariable('page',$this->page);
+        $view->setVariable('user',$this->user);
+        $view->setVariable('filtro',$this->filtro);
+        $view->setTemplate($this->template);
+        return $view;
+    }
+
+    public function uploadAction()
+    {
+        $form = new UploadForm('upload-form');
+
+        $tempFile = null;
+
+        $prg = $this->fileprg($form);
+
+        if ($prg instanceof Response) {
+            return $prg; // Return PRG redirect response
+        }
+
+        if (is_array($prg)) {
+            if ($form->isValid()) {
+                $data = $form->getData();
+
+               var_dump($data);
+            }
+
+            // Form not valid, but file uploads might be valid...
+            // Get the temporary file information to show the user in the view
+            $fileErrors = $form->get('image-file')->getMessages();
+
+            if (empty($fileErrors)) {
+                $tempFile = $form->get('image-file')->getValue();
+            }
+        }
+
+        $view=new ViewModel($this->data);
+        $view->setVariable('controller',$this->controller);
+        $view->setVariable('tempFile',$tempFile);
+        $view->setVariable('form',$form);
+        $view->setVariable('route',$this->route);
+        $view->setVariable('page',$this->page);
+        $view->setVariable('user',$this->user);
+        $view->setVariable('filtro',$this->filtro);
+        $view->setTemplate('/admin/admin/upload');
+        return $view;
+    }
 
 } 

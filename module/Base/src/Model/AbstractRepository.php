@@ -41,9 +41,10 @@ abstract class AbstractRepository{
 
     /**
      * @param null $where
+     * @param array $filtro
      * @return \Zend\Db\ResultSet\ResultSet
      */
-    public function select($where = null)
+    public function select($where = null,$page=1)
     {
         $this->setData(new Result());
         $data=$this->tableGateway->select($where);

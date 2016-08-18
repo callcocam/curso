@@ -1,0 +1,17 @@
+
+<!-- File: upload-form.phtml -->
+<?php
+$form->prepare(); // The correct enctype is set here
+$fileElement = $form->get('image-file');
+echo $this->form()->openTag($form);
+?>
+
+<div class="form-element">
+    <?= $this->formLabel($fileElement) ?>
+    <?= $this->formFile($fileElement) ?>
+    <?= $this->formElementErrors($fileElement) ?>
+</div>
+
+<button>Submit</button>
+
+<?= $this->form()->closeTag() ?>

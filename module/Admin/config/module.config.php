@@ -7,7 +7,9 @@
 
 namespace Admin;
 
+use Admin\Controller\ConfiguracaoController;
 use Admin\Controller\Factory\AdminControllerFactory;
+use Admin\Controller\Factory\ConfiguracaoControllerFactory;
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
 
@@ -34,11 +36,22 @@ return [
                     ],
                 ],
             ],
+            'configuracao' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/configuracao[/:action]',
+                    'defaults' => [
+                        'controller' => Controller\ConfiguracaoController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+            ],
         ],
     ],
     'controllers' => [
         'factories' => [
             Controller\AdminController::class => AdminControllerFactory::class,
+            Controller\ConfiguracaoController::class => ConfiguracaoControllerFactory::class,
         ],
     ],
     'view_manager' => [

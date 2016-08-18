@@ -9,6 +9,9 @@
 namespace Base\Model;
 
 
+use Interop\Container\ContainerInterface;
+use Zend\Db\Adapter\AdapterInterface;
+use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
 
 class AbstractFactory {
@@ -17,8 +20,14 @@ class AbstractFactory {
     protected $model;
     protected $adapter;
 
-    public function getTablegateway()
+    /**
+     * @return TableGateway
+     */
+    public function getTablegateway(ContainerInterface $containerInterface)
     {
-        return new TableGateway($this->table,$this->adapter,null,$this->model);
+        $this->adapter=AdapterInterface::class;
+        $resultSet=new ResultSet();
+        $ObjectPrototype=$resultSet->setArrayObjectPrototype($containerInterface->get($this->model));
+        return new TableGateway($this->table,$containerInterface->get($this->adapter),null, $ObjectPrototype);
     }
 } 

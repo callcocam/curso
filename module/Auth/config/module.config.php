@@ -8,7 +8,11 @@
 namespace Auth;
 
 use Auth\Controller\Factory\AuthControllerFactory;
+use Auth\Controller\Factory\ResourcesControllerFactory;
+use Auth\Controller\ResourcesController;
 use Zend\Router\Http\Literal;
+use Zend\Router\Http\Segment;
+
 return [
     'router' => [
         'routes' => [
@@ -22,12 +26,23 @@ return [
                     ],
                 ],
             ],
+            'resources' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route'    => '/resources[/:action]',
+                    'defaults' => [
+                        'controller' => Controller\ResourcesController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+            ],
 
         ],
     ],
     'controllers' => [
         'factories' => [
             Controller\AuthController::class => AuthControllerFactory::class,
+            Controller\ResourcesController::class => ResourcesControllerFactory::class,
         ],
     ],
     'view_manager' => [
