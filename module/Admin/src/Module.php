@@ -8,6 +8,10 @@
 namespace Admin;
 
 
+use Admin\Form\ConfiguracaoFilter;
+use Admin\Form\ConfiguracaoForm;
+use Admin\Form\Factory\ConfiguracaoFilterFactory;
+use Admin\Form\Factory\ConfiguracaoFormFactory;
 use Admin\Model\Configuracao;
 use Admin\Model\ConfiguracaoRepository;
 use Admin\Model\Factory\ConfiguracaoFactory;
@@ -34,7 +38,9 @@ class Module implements ConfigProviderInterface, ServiceProviderInterface
         return [
             'factories'=>[
                ConfiguracaoRepository::class=>ConfiguracaoRepositoryFactory::class,
-                Configuracao::class=>ConfiguracaoFactory::class
+                Configuracao::class=>ConfiguracaoFactory::class,
+                ConfiguracaoForm::class=>ConfiguracaoFormFactory::class,
+                ConfiguracaoFilter::class=>ConfiguracaoFilterFactory::class,
             ]
         ];
     }

@@ -11,6 +11,7 @@ namespace Base\Controller;
 
 use Base\Form\UploadForm;
 use Interop\Container\ContainerInterface;
+use Zend\Debug\Debug;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\MvcEvent;
@@ -127,44 +128,70 @@ abstract class AbstractController extends AbstractActionController {
         return $view;
     }
 
-    public function uploadAction()
+    public function inserirAction()
     {
-        $form = new UploadForm('upload-form');
 
-        $tempFile = null;
+        $this->form=$this->getForm();
+        if($this->getData()){
 
-        $prg = $this->fileprg($form);
 
-        if ($prg instanceof Response) {
-            return $prg; // Return PRG redirect response
         }
-
-        if (is_array($prg)) {
-            if ($form->isValid()) {
-                $data = $form->getData();
-
-               var_dump($data);
-            }
-
-            // Form not valid, but file uploads might be valid...
-            // Get the temporary file information to show the user in the view
-            $fileErrors = $form->get('image-file')->getMessages();
-
-            if (empty($fileErrors)) {
-                $tempFile = $form->get('image-file')->getValue();
-            }
-        }
-
         $view=new ViewModel($this->data);
         $view->setVariable('controller',$this->controller);
-        $view->setVariable('tempFile',$tempFile);
-        $view->setVariable('form',$form);
+        $view->setVariable('form',$this->form);
         $view->setVariable('route',$this->route);
         $view->setVariable('page',$this->page);
         $view->setVariable('user',$this->user);
         $view->setVariable('filtro',$this->filtro);
-        $view->setTemplate('/admin/admin/upload');
+        $view->setTemplate('/admin/admin/editar');
         return $view;
     }
+
+    public function updateAction()
+    {
+
+        $this->form=$this->getForm();
+        if($this->getData()){
+
+
+        }
+        $view=new ViewModel($this->data);
+        $view->setVariable('controller',$this->controller);
+        $view->setVariable('form',$this->form);
+        $view->setVariable('route',$this->route);
+        $view->setVariable('page',$this->page);
+        $view->setVariable('user',$this->user);
+        $view->setVariable('filtro',$this->filtro);
+        $view->setTemplate('/admin/admin/editar');
+        return $view;
+    }
+
+    public function deleteAction()
+    {
+
+        $view=new ViewModel($this->data);
+        $view->setVariable('controller',$this->controller);
+        $view->setVariable('route',$this->route);
+        $view->setVariable('page',$this->page);
+        $view->setVariable('user',$this->user);
+        $view->setVariable('filtro',$this->filtro);
+        $view->setTemplate('/admin/admin/delete');
+        return $view;
+    }
+
+    public function finalizarAction()
+    {
+        $this->form=$this->getForm();
+        if($this->getData()){
+            $this->form->setData($this->getData());
+            if(!$this->form->isValid())
+            {
+                Debug::dump($this->form->getMessages());
+            }
+            Debug::dump($this->getData());
+        }
+       die;
+    }
+
 
 } 

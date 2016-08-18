@@ -1,0 +1,28 @@
+<?php
+$form->prepare(); // The correct enctype is set here
+$form->setAttribute('action',$this->url($this->route,['controller'=>$this->controller,'action'=>'finalizar']));
+echo $this->form()->openTag($form);?>
+<?php
+
+if($form):
+    foreach($form->getElements() as $element):
+    ?>
+    <?php if($element->getAttribute('type')=='hidden'):?>
+        <?= $this->formElement($element) ?>
+    <?php else:?>
+        <div class="form-group">
+
+            <?= $this->formLabel($element) ?>
+
+            <div class="col-sm-12">
+                <?= $this->formElement($element) ?>
+                <?= $this->formElementErrors($element) ?>
+            </div>
+        </div>
+        <?php endif;?>
+    <?php
+    endforeach;
+    endif;
+?>
+    <button>Submit</button>
+<?= $this->form()->closeTag() ?>

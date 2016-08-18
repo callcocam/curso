@@ -9,6 +9,8 @@
 namespace Admin\Controller;
 
 
+use Admin\Form\ConfiguracaoFilter;
+use Admin\Form\ConfiguracaoForm;
 use Admin\Model\Configuracao;
 use Admin\Model\ConfiguracaoRepository;
 use Base\Controller\AbstractController;
@@ -24,6 +26,8 @@ class ConfiguracaoController extends AbstractController{
         $this->containerInterface=$containerInterface;
         $this->table=ConfiguracaoRepository::class;
         $this->model=Configuracao::class;
+        $this->form=ConfiguracaoForm::class;
+        $this->filter=ConfiguracaoFilter::class;
         $this->controller="configuracao";
         $this->route="configuracao";
     }
